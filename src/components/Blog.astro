@@ -1,0 +1,17 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BlogCard from './BlogCard.astro';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+}
+
+const { posts } = Astro.props;
+---
+
+<div class="blog">
+    {posts.map((post) => (
+        <BlogCard post={post} />
+    ))}
+  {posts.length === 0 && <p class="blog-empty">No posts yet.</p>}
+</div>

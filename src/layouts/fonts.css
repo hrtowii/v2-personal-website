@@ -1,0 +1,71 @@
+/* 1.33x for main page and other stuff */
+:root {
+  --font-size-heading1: 3.583rem;
+  --font-size-heading2: 2.986rem;
+  --font-size-heading3: 2.488rem;
+  --font-size-heading4: 2.074rem;
+  --font-size-heading5: 1.728rem;
+  --font-size-heading6: 1.440rem;
+}
+
+/* 1.125 scale, 16px rem base, for blogposts */
+article {
+  --font-size-heading1: 2.281rem;
+  --font-size-heading2: 2.027rem;
+  --font-size-heading3: 1.802rem;
+  --font-size-heading4: 1.602rem;
+  --font-size-heading5: 1.424rem;
+  --font-size-heading6: 1.266rem;
+}
+
+body {
+  font-size: var(--font-size-body);
+  line-height: 1.6;
+}
+
+p {
+  margin-block: 0 1.25rem;
+  line-height: 1.6;
+}
+
+/* i dont want margin bottom from p mooshing with margin top from headers */
+p:has(+ :is(h1, h2, h3, h4, h5, h6)) {
+  margin-bottom: 0;
+}
+
+p {
+  margin-block: 0 1.25rem;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 500;
+  line-height: 1.15;
+  margin-block: 2rem 0.75rem;
+}
+
+h1 {
+  font-size: var(--font-size-heading1);
+  margin-block: 2.5rem 1rem;
+}
+
+h2 {
+  font-size: var(--font-size-heading2);
+  margin-block: 2.25rem 0.75rem;
+}
+
+h3 {
+  font-size: var(--font-size-heading3);
+  margin-block: 2rem 0.625rem;
+}
+h4 {
+  font-size: var(--font-size-heading4);
+}
+
+h5 {
+  font-size: var(--font-size-heading5);
+}
+
+h6 {
+  font-size: var(--font-size-heading6);
+}

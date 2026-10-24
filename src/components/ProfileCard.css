@@ -1,0 +1,16 @@
+.pfp,
+.pfp_shadow {
+  position: absolute;
+}
+
+.pfp_wrapper {
+  height: 250px;
+  width: 250px;
+  position: relative;
+}
+
+.pfp_shadow {
+    top: 10px;
+    left: 8px;
+    opacity: 0.5;
+}

@@ -1,0 +1,75 @@
+  .alternate {
+    animation: highlight 2s steps(1) infinite;
+  }
+
+  @keyframes highlight {
+    0%, 49.99% {
+      color: var(--fg);
+      background: transparent;
+    }
+
+    50%, 100% {
+      color: var(--bg);
+      background: var(--fg);
+    }
+}
+
+.index {
+	display: flex;
+	gap: 1.2rem;
+	flex-direction: column;
+}
+
+.status {
+    margin-block: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.funnylayout1 {
+    display: flex;
+    gap: 1.2rem;
+    justify-content: space-around;
+}
+
+/* 2 vertical rows in a horizontal layout */
+.allposts {
+    margin-top: 2rem;
+}
+.allposts > a {
+    display: flex;
+    align-items: flex-start;
+    text-decoration: none;
+}
+
+.allposts span {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    letter-spacing: -0.25rem;
+}
+
+.allposts > * > .posts {
+    margin-top: 2rem;
+}
+
+.projects {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+/* MARK: the grid of things for layout */
+.thegrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(3, auto);
+
+    grid-template-areas:
+        "status blogposts blogposts"
+        "projects projects projects"
+        "badges music music";
+}
+
+.status { grid-area: status; }
+.blogposts  { grid-area: blogposts; }
+.projects { grid-area: projects; }

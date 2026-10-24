@@ -1,16 +1,67 @@
 ---
+import Layout from "../layouts/Layout.astro";
+import "../layouts/reset.css";
+import "./index.css";
+import { getCollection } from "astro:content";
+import ProfileCard from "../components/ProfileCard";
+import Projects from "../components/Projects.astro";
+import { formatDate } from "../utils/blog";
+const posts = (await getCollection("blog"))
+    .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+    .slice(0, 2);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title={"home"}>
+    <div class="index">
+        <div class="name">
+            <h1 class="span">h</h1>
+
+            <h1 class="span alternate">
+                <span>tr</span>
+            </h1>
+
+            <h1 class="span">owii</h1>
+        </div>
+        <div class="thegrid">
+            <div class="status">
+                <ProfileCard client:load />
+            </div>
+            <div class="blogposts">
+                <h3>blogposts</h3>
+                <div class="funnylayout1">
+                    <div class="wrapper">
+                        {posts.map((post) => (
+                            <div class="blogpost">
+                                <h5>
+                                    <a href={`/blog/${post.id}/`}>
+                                        {post.data.title}
+                                    </a>
+                                </h5>
+                                <time datetime={post.data.date.toISOString()}>
+                                    {formatDate(post.data.date)}
+                                </time>
+                            </div>
+                        ))}
+                    </div>
+                    <div class="allposts">
+                        <a href="/blog/">
+                            <span>All</span>
+                            <span class="posts">Posts</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="projects">
+                <h3>projects &gt;</h3>
+                <Projects />
+            </div>
+        </div>
+    </div>
+</Layout>
+<script>
+    const el = document.querySelector(".alternate");
+
+    setInterval(() => {
+        el.textContent = el.textContent === "tr" ? "rt" : "tr";
+    }, 1000);
+</script>

@@ -1,0 +1,17 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import './blog.css';
+import { getPublishedPosts } from '../../utils/blog';
+import Blog from '../../components/Blog.astro';
+
+const posts = await getPublishedPosts();
+---
+
+<Layout title="blog">
+  <main>
+    <a href="/">home</a>
+    <h1>blog</h1>
+    <Blog posts={posts} />
+  </main>
+</Layout>
+

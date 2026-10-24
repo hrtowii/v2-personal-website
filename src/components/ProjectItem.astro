@@ -1,0 +1,43 @@
+---
+import type { Project } from "../data/projects";
+import "./ProjectItem.css";
+interface Props {
+    project: Project;
+    category: string;
+    compact?: boolean;
+    placement?: "left" | "right" | "narrow-right";
+}
+
+const { project, category, compact = false, placement = "left" } = Astro.props;
+const images = project.images ?? [];
+---
+
+<div class:list={[
+    "project-item",
+    {
+        "project-item--compact": compact,
+        "project-item--right": !compact && placement !== "left",
+        "project-item--narrow": !compact && placement === "narrow-right",
+        "project-item--with-images": images.length > 0,
+    },
+]}>
+    <div class="project-info">
+        <h4>
+            <a href={project.link}>{project.title}</a>
+        </h4>
+        <p>{project.description}</p>
+        <p class="project-category">{category}</p>
+    </div>
+
+    {images.length > 0 && (
+        <div class:list={["project-images", { "project-images--edge": !compact && images.length >= 3 }]}>
+            {images.map((src, index) => (
+                <img
+                    src={src}
+                    alt={`${project.title} — image ${index + 1}`}
+                    loading="lazy"
+                />
+            ))}
+        </div>
+    )}
+</div>

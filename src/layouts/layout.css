@@ -1,0 +1,72 @@
+/* here in this household we only have 2 colors. background and foreground. anything else? 2 bad, dithered */
+
+:root {
+	--bg: hsl(260, 82%, 14%);
+	--fg: hsl(120, 100%, 92%);
+}
+
+@media (prefers-color-scheme: light) {
+:root {
+	--fg: hsl(260, 82%, 14%);
+	--bg: hsl(120, 100%, 92%);
+}
+}
+
+
+html {
+	color: var(--fg);
+	background-color: var(--bg);
+	font-size: 16px;
+}
+
+a {
+	color: inherit;
+}
+
+a:hover {
+	color: var(--bg);
+	background-color: var(--fg);
+}
+
+::selection {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+
+/* mark: fonts (sizing in fonts.css) */
+
+@font-face {
+  font-family: 'Michelangelus';
+  src: url('/Michelangelus-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: "Michelangelus";
+	word-break: break-all;
+}
+
+p, span, ol, ul, a {
+	font-family: "Xanh Mono";
+	word-break: break-all;
+}
+
+.span {
+	display: inline;
+	margin: 0;
+}
+
+.italic {
+	font-style: italic;
+}
+
+.container {
+	margin-block: 10vh;
+	margin-inline: 10vw;
+	width: 80vw;
+}
+

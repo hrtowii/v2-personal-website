@@ -1,0 +1,396 @@
+---
+interface Props {
+    strokeWidth?: number;
+    branchDensity?: number;
+    curvature?: number;
+    horizontalSpread?: number;
+    verticalStretch?: number;
+    seed?: number;
+}
+
+const {
+    strokeWidth = 1.6,
+    branchDensity = 3,
+    curvature = 0.45,
+    horizontalSpread = 0.65,
+    verticalStretch = 1.35,
+    seed = 25,
+} = Astro.props;
+---
+
+<project-vine
+    data-stroke-width={strokeWidth}
+    data-branch-density={branchDensity}
+    data-curvature={curvature}
+    data-horizontal-spread={horizontalSpread}
+    data-vertical-stretch={verticalStretch}
+    data-seed={seed}
+    aria-hidden="true"
+>
+    <svg class="vine-base" aria-hidden="true" focusable="false"></svg>
+    <svg class="vine-overlap" aria-hidden="true" focusable="false"></svg>
+</project-vine>
+
+<style>
+    project-vine {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        /* Keep the background and overlap layers in the content's stacking context. */
+    }
+
+    svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        fill: none;
+        stroke: var(--fg);
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        pointer-events: none;
+    }
+
+    .vine-base {
+        z-index: 0;
+    }
+    .vine-overlap {
+        z-index: 2;
+        /* White produces a neutral inversion; colored strokes tint the difference. */
+        stroke: white;
+        mix-blend-mode: difference;
+    }
+</style>
+
+<script>
+    const NS = "http://www.w3.org/2000/svg";
+    const clamp = (n: number, low: number, high: number) =>
+        Math.max(low, Math.min(high, n));
+
+    // Restarted on every draw; resize changes measurements, never random choices.
+    function randomGenerator(seed: number) {
+        return () => {
+            seed |= 0;
+            seed = (seed + 0x6d2b79f5) | 0;
+            let n = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+            n ^= n + Math.imul(n ^ (n >>> 7), 61 | n);
+            return ((n ^ (n >>> 14)) >>> 0) / 4294967296;
+        };
+    }
+
+    function svgNode(tag: string, attrs: Record<string, string | number> = {}) {
+        const node = document.createElementNS(NS, tag);
+        for (const [key, value] of Object.entries(attrs))
+            node.setAttribute(key, String(value));
+        return node;
+    }
+
+    class ProjectVine extends HTMLElement {
+        private observer?: ResizeObserver;
+        private abort?: AbortController;
+        private frame = 0;
+
+        connectedCallback() {
+            const host = this.parentElement;
+            if (!host) return;
+            this.abort = new AbortController();
+            const { signal } = this.abort;
+            this.observer = new ResizeObserver(this.schedule);
+            this.observer.observe(host);
+            host.querySelectorAll(
+                ".project-item, .project-info, .project-images",
+            ).forEach((node) => this.observer!.observe(node));
+            host.querySelectorAll("img").forEach((image) => {
+                image.addEventListener("load", this.schedule, { signal });
+                image.addEventListener("error", this.schedule, { signal });
+            });
+            host.closest("details")?.addEventListener("toggle", this.schedule, {
+                signal,
+            });
+            window.addEventListener("resize", this.schedule, {
+                signal,
+                passive: true,
+            });
+            document.fonts.ready.then(() => {
+                if (!signal.aborted) this.schedule();
+            });
+            this.schedule();
+        }
+
+        disconnectedCallback() {
+            this.abort?.abort();
+            this.observer?.disconnect();
+            cancelAnimationFrame(this.frame);
+            this.frame = 0;
+        }
+
+        private schedule = () => {
+            if (this.frame) return;
+            this.frame = requestAnimationFrame(() => {
+                this.frame = 0;
+                this.draw();
+            });
+        };
+
+        private draw() {
+            const host = this.parentElement!;
+            if (host.closest("details")?.open === false) return;
+            const bounds = host.getBoundingClientRect();
+            const width = bounds.width;
+            const height = bounds.height;
+            const entries = Array.from(
+                host.querySelectorAll<HTMLElement>(":scope > .project-item"),
+            );
+            if (width < 1 || height < 1 || !entries.length) return;
+
+            const value = (key: string, fallback: number) => {
+                const n = Number(this.dataset[key]);
+                return Number.isFinite(n) ? n : fallback;
+            };
+            const random = randomGenerator(value("seed", 37));
+            const stroke = clamp(value("strokeWidth", 1.6), 0.2, 5);
+            const density = clamp(value("branchDensity", 3), 0, 8);
+            const curvature = clamp(value("curvature", 0.45), 0, 1);
+            const spread = clamp(value("horizontalSpread", 0.65), 0, 1);
+            const stretch = clamp(value("verticalStretch", 1.35), 1, 3);
+            const mobile = window.innerWidth <= 700;
+            const inset = Math.min(12, width * 0.04);
+            // Borrow a little page margin so full-width mobile text has breathing room.
+            const bleed = Math.max(
+                0,
+                Math.min(
+                    48,
+                    bounds.left - 8,
+                    document.documentElement.clientWidth - bounds.right - 8,
+                ),
+            );
+            const safeX = (x: number) =>
+                clamp(x, -bleed + inset, width + bleed - inset);
+            const base = this.querySelector<SVGSVGElement>(".vine-base")!;
+            const front = this.querySelector<SVGSVGElement>(".vine-overlap")!;
+
+            const makeLayer = (svg: SVGSVGElement) => {
+                svg.replaceChildren();
+                svg.style.left = `${-bleed}px`;
+                svg.style.width = `${width + bleed * 2}px`;
+                svg.setAttribute(
+                    "viewBox",
+                    `${-bleed} 0 ${width + bleed * 2} ${height}`,
+                );
+                const group = svgNode("g", { "stroke-width": stroke });
+                svg.append(group);
+                return group;
+            };
+            const background = makeLayer(base);
+            const overlap = makeLayer(front);
+
+            type Point = { x: number; y: number };
+            const point = (x: number, y: number): Point => ({
+                x: safeX(x),
+                y: clamp(y, 4, height - 4),
+            });
+            let pen = point(mobile ? -bleed * 0.5 : width * 0.16, 4);
+            let leaving = { x: mobile ? 0 : width * 0.12, y: 0 };
+            let mobileDirection = -1;
+            let d = `M ${pen.x} ${pen.y}`;
+            const curve = (first: Point, second: Point, end: Point) => {
+                d += ` C ${first.x} ${first.y}, ${second.x} ${second.y}, ${end.x} ${end.y}`;
+                pen = end;
+                leaving = { x: end.x - second.x, y: end.y - second.y };
+            };
+
+            // Each gesture wraps around a text block. The gaps carry the broad sweeps;
+            // the empty side of each project gives the stem room to bow and turn back.
+            entries.forEach((entry, index) => {
+                const info = entry
+                    .querySelector(".project-info")!
+                    .getBoundingClientRect();
+                const variation = random(),
+                    lean = random();
+                const left = info.left - bounds.left;
+                const right = info.right - bounds.left;
+                // Cross sides through the taller gallery gaps, not a short text-only gap.
+                if (
+                    mobile &&
+                    index > 0 &&
+                    entries[index - 1].querySelector(".project-images")
+                ) {
+                    mobileDirection *= -1;
+                }
+                const direction = mobile
+                    ? mobileDirection
+                    : Math.abs(left - (width - right)) < 1
+                      ? index % 2 === 0
+                          ? -1
+                          : 1
+                      : left > width - right
+                        ? -1
+                        : 1;
+                const clearance = mobile ? Math.max(8, bleed * 0.45) : 24;
+                const lane = safeX(
+                    direction < 0 ? left - clearance : right + clearance,
+                );
+                const room =
+                    direction < 0
+                        ? lane - safeX(-bleed)
+                        : safeX(width + bleed) - lane;
+                const bow =
+                    Math.min(room * 0.85, width * 0.2, 150) *
+                    (0.65 + variation * 0.35) *
+                    (0.45 + spread * 0.55);
+                const top = Math.max(4, info.top - bounds.top - clearance);
+                const bottom = Math.min(
+                    height - 8,
+                    info.bottom - bounds.top + clearance,
+                );
+                const span = bottom - top;
+                const approach = point(lane, top);
+                const reach = bow * (0.5 + curvature * 0.5);
+                const arriving = {
+                    x: direction * reach,
+                    y: Math.min(24, span * 0.15),
+                };
+
+                // Matched handles make the sweep flow directly into the next curl.
+                const gap = Math.max(0, top - pen.y);
+                curve(
+                    point(
+                        mobile ? pen.x : pen.x + leaving.x,
+                        pen.y +
+                            (mobile
+                                ? gap / 3
+                                : Math.min(leaving.y, gap * 0.45)),
+                    ),
+                    point(
+                        mobile ? approach.x : approach.x - arriving.x,
+                        approach.y -
+                            (mobile
+                                ? gap / 3
+                                : Math.min(arriving.y, gap * 0.45)),
+                    ),
+                    approach,
+                );
+
+                if (mobile) {
+                    // Vertical tangents ease into and out of each gentle side bow.
+                    const belly = point(
+                        lane + direction * bow * 0.6,
+                        top + span * 0.5,
+                    );
+                    curve(
+                        point(lane, top + span * 0.2),
+                        point(belly.x, top + span * 0.35),
+                        belly,
+                    );
+                    curve(
+                        point(belly.x, top + span * 0.65),
+                        point(lane, bottom - span * 0.2),
+                        point(lane, bottom),
+                    );
+                } else if (index % 3 === 1 && bow > 35) {
+                    // An open, returning loop in the stem itself, kept outside the text.
+                    const belly = point(
+                        lane + direction * bow,
+                        top + span * 0.52,
+                    );
+                    const hook = point(
+                        lane + direction * bow * 0.4,
+                        top + span * 0.38,
+                    );
+                    curve(
+                        point(lane + arriving.x, top + arriving.y),
+                        point(belly.x, top + span * 0.2),
+                        belly,
+                    );
+                    curve(
+                        point(belly.x, top + span * 0.92),
+                        point(lane + direction * bow * 0.08, top + span * 0.7),
+                        hook,
+                    );
+                    curve(
+                        point(lane + direction * bow * 0.72, top + span * 0.06),
+                        point(
+                            lane + direction * bow * 0.3,
+                            bottom - span * 0.18,
+                        ),
+                        point(lane, bottom),
+                    );
+                } else {
+                    // Unequal handles give each long bow a different weight and lean.
+                    curve(
+                        point(lane + arriving.x, top + arriving.y),
+                        point(
+                            lane + direction * reach * (0.65 + lean * 0.3),
+                            bottom - span * 0.22,
+                        ),
+                        point(lane, bottom),
+                    );
+                }
+            });
+            const remaining = height - pen.y - 4;
+            const tailX = safeX(pen.x + leaving.x * 1.5);
+            curve(
+                point(
+                    pen.x + leaving.x,
+                    pen.y + Math.min(leaving.y, remaining * 0.4),
+                ),
+                point(tailX, height - 4 - remaining * 0.3),
+                point(tailX, height - 4),
+            );
+            const main = svgNode("path", {
+                d,
+                "data-vine-main": "",
+            }) as SVGPathElement;
+            // Difference blends with text; galleries sit above both SVG layers.
+            overlap.append(main);
+            const length = main.getTotalLength();
+            if (!Number.isFinite(length) || length <= 0) return;
+
+            // Local tangent/normal coordinates keep every flourish attached to the stem.
+            const count = Math.round(entries.length * density);
+            for (let i = 0; i < count; i++) {
+                const t =
+                    0.06 + ((i + random() * 0.65) / Math.max(1, count)) * 0.82;
+                const distance = t * length;
+                const point = main.getPointAtLength(distance);
+                const before = main.getPointAtLength(Math.max(0, distance - 2));
+                const after = main.getPointAtLength(
+                    Math.min(length, distance + 2),
+                );
+                const angle = Math.atan2(
+                    after.y - before.y,
+                    after.x - before.x,
+                );
+                const side = random() > 0.5 ? 1 : -1;
+                const size =
+                    Math.min(width * (mobile ? 0.12 : 0.17), 100) *
+                    (0.5 + random() * 0.5) *
+                    (1 - t * 0.4);
+                const xy = (along: number, away: number) =>
+                    `${safeX(point.x + Math.cos(angle) * along - Math.sin(angle) * away * side)} ${clamp(point.y + (Math.sin(angle) * along + Math.cos(angle) * away * side) * stretch, 2, height - 2)}`;
+                const curl = `M ${xy(0, 0)} C ${xy(size * 0.3, size * 0.15)}, ${xy(size * 0.5, size)}, ${xy(0, size)} C ${xy(-size * 0.55, size)}, ${xy(-size * 0.35, size * 0.32)}, ${xy(-size * 0.08, size * 0.55)}`;
+                // Most ornaments stay underneath; a minority cross above the content.
+                const layer = i % 3 === 1 ? overlap : background;
+                layer.append(
+                    svgNode("path", { d: curl, "stroke-width": stroke * 0.85 }),
+                );
+                const thorn = `M ${xy(-size * 0.18, 0)} Q ${xy(0, size * 0.06)}, ${xy(size * 0.12, -size * 0.36)} Q ${xy(size * 0.08, -size * 0.04)}, ${xy(size * 0.25, 0)}`;
+                background.append(
+                    svgNode("path", { d: thorn, "stroke-width": stroke * 0.9 }),
+                );
+                if (i % 2 === 0) {
+                    layer.append(
+                        svgNode("path", {
+                            d: `M ${xy(size * 0.12, size * 0.34)} C ${xy(size * 0.9, size * 0.4)}, ${xy(size * 0.85, -size * 0.15)}, ${xy(size * 1.1, size * 0.05)}`,
+                            "stroke-width": stroke * 0.65,
+                        }),
+                    );
+                }
+            }
+        }
+    }
+
+    if (!customElements.get("project-vine"))
+        customElements.define("project-vine", ProjectVine);
+</script>
