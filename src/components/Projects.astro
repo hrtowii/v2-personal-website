@@ -7,11 +7,19 @@ import "./Projects.css";
 // Repeat the text placement: left, right, narrow right, right, left.
 const placements = ["left", "right", "narrow-right", "right", "left"] as const;
 const projects = projectdata.flatMap((group) =>
-    group.projects.map((project) => ({ project, category: group.title }))
+    group.projects.map((project) => ({ project, category: group.title })),
 );
 const sections = [
-    { title: "featured", compact: false, projects: projects.filter(({ project }) => project.important === true) },
-    { title: "others", compact: true, projects: projects.filter(({ project }) => project.important !== true) },
+    {
+        title: "cool!",
+        compact: false,
+        projects: projects.filter(({ project }) => project.important === true),
+    },
+    {
+        title: "others",
+        compact: true,
+        projects: projects.filter(({ project }) => project.important !== true),
+    },
 ];
 ---
 
@@ -20,9 +28,17 @@ const sections = [
         <details class="project-group" open={!section.compact}>
             <summary>
                 <h4>{section.title}</h4>
-                <span class="project-marker" aria-hidden="true">&gt;</span>
+                <span class="project-marker" aria-hidden="true">
+                    &gt;
+                </span>
             </summary>
-            <div class:list={["project-list", { "project-list--compact": section.compact }]} data-vine-host={!section.compact}>
+            <div
+                class:list={[
+                    "project-list",
+                    { "project-list--compact": section.compact },
+                ]}
+                data-vine-host={!section.compact}
+            >
                 {!section.compact && <ProjectVine />}
                 {section.projects.map(({ project, category }, index) => (
                     <ProjectItem
