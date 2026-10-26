@@ -49,9 +49,13 @@ import DitheredImage from "./DitheredImage.astro";
                 }),
             );
 
-            const cover = tracks[0]?.image?.findLast(
-                (image) => image["#text"],
-            )?.["#text"];
+            const currentTrack = tracks.find(
+                (track) => track["@attr"]?.nowplaying === "true",
+            );
+            const selectedTrack = currentTrack ?? tracks[0];
+            const getCover = (track?: LastfmTrack) =>
+                track?.image?.findLast((image) => image["#text"])?.["#text"];
+            const cover = getCover(selectedTrack) ?? tracks.map(getCover).find(Boolean);
             if (!cover) return;
 
             section.querySelector("dithered-image")!.setAttribute("src", cover);

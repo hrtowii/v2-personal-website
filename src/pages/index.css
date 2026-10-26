@@ -70,9 +70,47 @@
         "projects projects projects";
 }
 
+.linkswrapper {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-areas:
+        " . twitter . . ."
+        " . . github  . ."
+        " email .  . discord ."
+        " . resume . . .";
+    row-gap: 0.75rem;
+}
+
+.linkswrapper > a {
+    font-family: "Michelangelus";
+    font-size: 1.4rem;
+    justify-self: center;
+    width: fit-content;
+    padding: 0.15em 0.5em;
+}
+
+.linkswrapper > a:is(.github, .resume) {
+    color: var(--bg);
+    background: var(--fg);
+}
+
+/*.linkswrapper > a:nth-of-type(3n+2) {
+    color: var(--bg);
+    background: var(--fg);
+}*/
+
+.twitter { grid-area: twitter; }
+.github { grid-area: github; }
+.email { grid-area: email; }
+.discord {grid-area: discord;}
+.resume {grid-area: resume;}
+
+
+
 .status { grid-area: status; }
 .blogposts  { grid-area: blogposts; }
 .projects { grid-area: projects; }
+.links { grid-area: links; }
 .music { grid-area: music; }
 
 .webring-footer {
@@ -88,4 +126,66 @@
     z-index: -3;
     opacity: 0.5;
     /*rotate: 90deg;*/
+}
+
+.sigil2 {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: -3;
+    opacity: 0.3;
+    /*rotate: 90deg;*/
+}
+
+@media (max-width: 1024px) {
+    .status {
+        margin-block: 0.5rem;
+    }
+
+    .funnylayout1 {
+        flex-direction: column;
+    }
+
+    .allposts,
+    .allposts > * > .posts {
+        margin-top: 0;
+    }
+
+    .allposts > a {
+        gap: 0.25em;
+    }
+
+    .allposts span {
+        writing-mode: horizontal-tb;
+        text-orientation: mixed;
+        letter-spacing: normal;
+    }
+
+    .thegrid {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto;
+        grid-template-areas:
+            "status"
+            "blogposts"
+            "projects"
+            "music"
+            "links";
+        gap: 1.5rem;
+    }
+
+    .thegrid > * {
+        min-width: 0;
+    }
+
+    .sigil > svg {
+        display: block;
+        width: min(595px, 100vw);
+        height: auto;
+    }
+
+    .sigil2 > svg {
+        display: block;
+        width: min(735px, 100vw);
+        height: auto;
+    }
 }

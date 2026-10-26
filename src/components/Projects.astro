@@ -1,6 +1,5 @@
 ---
 import ProjectItem from "./ProjectItem.astro";
-import ProjectVine from "./ProjectVine.astro";
 import { projectdata } from "../data/projects";
 import "./Projects.css";
 
@@ -39,7 +38,6 @@ const sections = [
                 ]}
                 data-vine-host={!section.compact}
             >
-                {!section.compact && <ProjectVine />}
                 {section.projects.map(({ project, category }, index) => (
                     <ProjectItem
                         project={project}

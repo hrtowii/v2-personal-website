@@ -52,26 +52,26 @@ import DitheredImage from "./DitheredImage.astro";
             if (!result.success) throw new Error(result.error.message);
 
             const { data } = result;
-            card.querySelector(".discord-status")!.textContent =
-                data.discord_status;
+            // card.querySelector(".discord-status")!.textContent =
+            //     data.discord_status;
 
-            const activities = data.activities
-                .filter(({ name }) => name.toLowerCase() !== "spotify")
-                .map(({ type, name, details, state, emoji }) =>
-                    [type === 4 ? emoji?.name : name, details, state]
-                        .filter(Boolean)
-                        .join(" — "),
-                )
-                .filter(Boolean);
+            // const activities = data.activities
+            //     .filter(({ name }) => name.toLowerCase() !== "spotify")
+            //     .map(({ type, name, details, state, emoji }) =>
+            //         [type === 4 ? emoji?.name : name, details, state]
+            //             .filter(Boolean)
+            //             .join(" — "),
+            //     )
+            //     .filter(Boolean);
 
-            card.querySelector(".discord-activities")!.replaceChildren(
-                ...activities.map((activity) => {
-                    const span = document.createElement("span");
-                    span.className = "discord-status";
-                    span.textContent = activity;
-                    return span;
-                }),
-            );
+            // card.querySelector(".discord-activities")!.replaceChildren(
+            //     ...activities.map((activity) => {
+            //         const span = document.createElement("span");
+            //         span.className = "discord-status";
+            //         span.textContent = activity;
+            //         return span;
+            //     }),
+            // );
 
             const hash = data.discord_user.avatar;
             if (!hash) return;

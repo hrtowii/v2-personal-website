@@ -22,3 +22,14 @@
     left: 8px;
     opacity: 0.5;
 }
+
+@media (max-width: 1024px) {
+  .pfp_wrapper,
+  .pfp {
+    width: 150px;
+  }
+
+  .pfp {
+    height: 150px;
+  }
+}

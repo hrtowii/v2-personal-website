@@ -6,7 +6,7 @@
 .lastfm .lastfm-art {
   position: absolute;
   top: -3rem;
-  right: -2rem;
+  right: -5rem;
 
   width: 18rem;
   aspect-ratio: 1;
@@ -26,4 +26,15 @@
 .lastfm-link {
   display: flex;
   justify-content: flex-end;
+}
+
+@media (max-width: 1024px) {
+  .lastfm .sigily {
+    display: none;
+  }
+
+  .lastfm .lastfm-art {
+    right: 0;
+    width: min(12rem, 100%);
+  }
 }

@@ -49,12 +49,12 @@ a:hover {
 
 h1, h2, h3, h4, h5, h6 {
 	font-family: "Michelangelus";
-	word-break: break-all;
+	/*word-break: break-all;*/
 }
 
 p, span, ol, ul, a {
 	font-family: "Xanh Mono";
-	word-break: break-all;
+	/*word-break: break-all;*/
 }
 
 .span {
@@ -80,4 +80,10 @@ p, span, ol, ul, a {
     opacity: .012;
     z-index: 3;
     /*animation: fade-in 4s*/
+}
+
+body {
+    position: relative;
+    display: flow-root;
+    min-height: 100vh;
 }

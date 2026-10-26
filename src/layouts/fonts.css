@@ -16,6 +16,7 @@ article {
   --font-size-heading4: 1.602rem;
   --font-size-heading5: 1.424rem;
   --font-size-heading6: 1.266rem;
+  word-break: break-all;
 }
 
 body {

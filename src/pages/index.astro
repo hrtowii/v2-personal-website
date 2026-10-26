@@ -12,9 +12,16 @@ const posts = (await getCollection("blog"))
     .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
     .slice(0, 2);
 import sigil1 from "../../public/sigil1.svg?raw";
+// https://blackjactattoos.com/cdn/shop/files/cybersigil_18_copy.png?v=1778244144
+// https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQA3QZ4YExKDxvHXPRaDK0cd7lkwqjba5El_DZ9afgbuA&s=10
+
+// https://i.pinimg.com/736x/d9/0d/de/d90dde72084ddd284eabb7dcba15cb6a.jpg
+import spidercyberlilies from "../../public/spidercyberlilies.svg?raw";
 ---
 
 <Layout title={"home"}>
+    <div class="sigil2" set:html={spidercyberlilies} />
+
     <div class="index">
         <div class="sigil" set:html={sigil1} />
         <div class="name">
@@ -61,6 +68,38 @@ import sigil1 from "../../public/sigil1.svg?raw";
             </div>
             <div class="links">
                 <h3>findme</h3>
+                <div class="linkswrapper">
+                    <a
+                        href="https://twitter.com/htrowii"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="twitter"
+                    >
+                        twitter
+                    </a>
+                    <a
+                        href="https://github.com/hrtowii"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="github"
+                    >
+                        github
+                    </a>
+                    <a href="mailto:leonghongkit@gmail.com" class="email">
+                        email
+                    </a>
+                    <a
+                        href="https://discordapp.com/users/413331641109446656"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="discord"
+                    >
+                        discord
+                    </a>
+                    <a href="/lucascontinue.pdf?raw" class="resume">
+                        resume
+                    </a>
+                </div>
             </div>
             <div class="music">
                 <Music />
