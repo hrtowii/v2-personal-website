@@ -1,0 +1,82 @@
+---
+import "./Music.css";
+---
+
+<section class="lastfm">
+  <img class="lastfm-art" alt="music album art" hidden />
+  <h3>last_fm</h3>
+  <ul></ul>
+  <a class="lastfm-link" href="https://last.fm/u/htrowii">my lastfm</a>
+</section>
+
+<script>
+  import { dither } from "../utils/dither";
+
+  const LASTFM_USER = "htrowii";
+  const LASTFM_API_KEY = "7a6a9d9af3a543d82266d8f0ff110f2c";
+
+  interface LastfmTrack {
+    name: string;
+    url: string;
+    artist: { "#text": string };
+    image?: { "#text": string; size: string }[];
+    "@attr"?: { nowplaying?: string };
+  }
+
+  async function loadTracks(section: HTMLElement) {
+    try {
+      const response = await fetch(
+        `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${LASTFM_USER}&api_key=${LASTFM_API_KEY}&format=json&limit=5`,
+      );
+      if (!response.ok) throw new Error(`Last.fm request failed: ${response.status}`);
+
+      const data = await response.json();
+      const tracks: LastfmTrack[] = data.recenttracks?.track ?? [];
+      const list = section.querySelector("ul")!;
+
+      list.replaceChildren(...tracks.map((track) => {
+        const item = document.createElement("li");
+        const link = document.createElement("a");
+        link.href = track.url;
+        link.textContent = track.name;
+        item.append(link, ` — ${track.artist["#text"]}`);
+        if (track["@attr"]?.nowplaying === "true") item.append(" (playing)");
+        return item;
+      }));
+
+      const cover = tracks[0]?.image?.findLast((image) => image["#text"])?.["#text"];
+      if (!cover) return;
+
+      const image = new Image();
+      image.crossOrigin = "anonymous";
+      image.onload = () => {
+        try {
+          const art = dither(image);
+          const target = section.querySelector<HTMLImageElement>(".lastfm-art")!;
+          if (art) {
+            target.src = art;
+            target.hidden = false;
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      image.src = cover;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        observer.unobserve(entry.target);
+        void loadTracks(entry.target as HTMLElement);
+      }
+    }
+  });
+
+  document.querySelectorAll<HTMLElement>(".lastfm").forEach((section) => {
+    observer.observe(section);
+  });
+</script>
