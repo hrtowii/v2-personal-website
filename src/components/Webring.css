@@ -1,6 +1,7 @@
 .webring-row {
   overflow: hidden;
   max-width: 100%;
+  border-top: 1px solid var(--fg);
 }
 
 .webring-track {
@@ -49,7 +50,7 @@
   background: color-mix(in srgb, var(--bg), var(--fg) 7%);
   color: var(--fg);
 
-  border-block: 1px solid var(--fg);
+  border-bottom: 1px solid var(--fg);
   font-family: inherit;
 }
 
