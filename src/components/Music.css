@@ -3,7 +3,7 @@
   isolation: isolate;
 }
 
-.lastfm-art {
+.lastfm .lastfm-art {
   position: absolute;
   top: -3rem;
   right: -2rem;
@@ -16,7 +16,6 @@
   pointer-events: none;
   z-index: -1;
 
-  image-rendering: pixelated;
 }
 
 .lastfm ul {

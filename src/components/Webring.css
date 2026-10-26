@@ -20,6 +20,7 @@
     image-rendering: crisp-edges;
     image-rendering: pixelated;
 }
+
 .webring-track:hover .webring-group {
   animation-play-state: paused;
 }
@@ -47,7 +48,10 @@
   justify-content: space-between;
 
   padding: 0.5rem 1rem;
-  background: color-mix(in srgb, var(--bg), var(--fg) 7%);
+  /* i tried hsl and it was too vibrant when i want it to be kinda lighter bg */
+  background: color-mix(in srgb,
+		var(--bg),
+		var(--fg) 8%);
   color: var(--fg);
 
   border-bottom: 1px solid var(--fg);

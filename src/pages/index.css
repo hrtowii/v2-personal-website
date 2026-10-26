@@ -80,3 +80,12 @@
     margin-inline: calc(50% - 50vw);
     margin-top: 2rem;
 }
+
+.sigil {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -3;
+    opacity: 0.5;
+    /*rotate: 90deg;*/
+}

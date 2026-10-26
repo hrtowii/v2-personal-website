@@ -1,0 +1,114 @@
+---
+interface Props {
+    src?: string;
+    alt: string;
+    class?: string;
+    vines?: boolean;
+}
+const { src, alt, class: className, vines = false } = Astro.props;
+import sigily from "../../public/sigily.svg?raw";
+---
+
+<dithered-image src={src} class={className}>
+    <img alt={alt} />
+    {vines && <div class="sigily" aria-hidden="true" inert set:html={sigily} />}
+</dithered-image>
+
+<style>
+    dithered-image {
+        display: block;
+        position: relative;
+    }
+
+    dithered-image:not([data-ready]) {
+        display: none;
+    }
+
+    img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: inherit;
+        image-rendering: pixelated;
+    }
+
+    .sigily {
+        position: absolute;
+        top: -50%;
+        left: -20%;
+        height: 100%;
+        /*aspect-ratio: 386 / 835;*/
+        z-index: -1;
+        color: var(--fg);
+        pointer-events: none;
+        transform: scale(1.3) var(--vine-transform, rotate(25deg));
+        transform-origin: center;
+        opacity: 0.4;
+    }
+
+    .sigily :global(svg) {
+        display: block;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+    }
+
+    .sigily :global(path) {
+        vector-effect: non-scaling-stroke;
+    }
+</style>
+
+<script>
+    import { dither } from "../utils/dither";
+
+    // web components! lifecycke hooks are not just a kotlin thing ig
+    // https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements
+    // https://mdn.github.io/web-components-examples/
+    class DitheredImage extends HTMLElement {
+        static observedAttributes = ["src"];
+        // observe when src is changed ^^
+        // A static property named observedAttributes. This must be an array containing the names of all attributes for which the element needs change notifications.
+        // An implementation of the attributeChangedCallback() lifecycle callback.
+        attributeChangedCallback() {
+            if (this.isConnected) this.load();
+        }
+
+        connectedCallback() {
+            this.load();
+        }
+
+        private load() {
+            const target = this.querySelector("img");
+            const src = this.getAttribute("src");
+
+            this.removeAttribute("data-ready");
+            if (target) {
+                target.removeAttribute("src");
+            }
+
+            if (!src || !target) return;
+
+            const image = new Image();
+            image.crossOrigin = "anonymous";
+
+            image.onload = () => {
+                if (!this.isConnected || this.getAttribute("src") !== src)
+                    return;
+
+                const art = dither(image);
+                if (!art) return;
+
+                target.src = art;
+                this.setAttribute("data-ready", "");
+            };
+
+            image.onerror = () => {
+                console.error(new Error(`Image loading failed: ${src}`));
+            };
+            image.src = src;
+        }
+    }
+
+    if (!customElements.get("dithered-image"))
+        customElements.define("dithered-image", DitheredImage);
+</script>
