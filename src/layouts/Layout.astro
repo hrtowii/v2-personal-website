@@ -1,10 +1,10 @@
 ---
-import type { ComponentProps } from 'astro/types';
-import Metadata from '../components/Metadata.astro';
+import type { ComponentProps } from "astro/types";
+import Metadata from "../components/Metadata.astro";
 
 interface Props {
     title: string;
-    metadata?: Omit<ComponentProps<typeof Metadata>, 'title'>;
+    metadata?: Omit<ComponentProps<typeof Metadata>, "title">;
 }
 
 const { title, metadata } = Astro.props;
@@ -16,14 +16,17 @@ import "./layout.css";
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width" />
+        <meta name="viewport" content="width=device-width" />
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Xanh+Mono:ital@0;1&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Xanh+Mono:ital@0;1&display=swap"
+            rel="stylesheet"
+        />
 
         {metadata && <Metadata title={title} {...metadata} />}
-	<title>{title + ' | hrtowii.nekoweb.org'}</title>
+        <title>{title + ' | hrtowii.nekoweb.org'}</title>
     </head>
     <body>
         <div class="container">
@@ -31,3 +34,7 @@ import "./layout.css";
         </div>
     </body>
 </html>
+<script>
+    import { generateNoise } from "../utils/noise";
+    await generateNoise();
+</script>

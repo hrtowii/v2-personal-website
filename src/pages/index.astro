@@ -6,6 +6,8 @@ import { getCollection } from "astro:content";
 import ProfileCard from "../components/ProfileCard";
 import Projects from "../components/Projects.astro";
 import { formatDate } from "../utils/blog";
+import Webring from "../components/Webring";
+import Music from "../components/Music";
 const posts = (await getCollection("blog"))
     .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
     .slice(0, 2);
@@ -55,8 +57,18 @@ const posts = (await getCollection("blog"))
                 <h3>projects &gt;</h3>
                 <Projects />
             </div>
+            <div class="links">
+                <h3>findme</h3>
+            </div>
+            <div class="music">
+                <!-- <h3>last_fm</h3> -->
+                <Music client:visible />
+            </div>
         </div>
     </div>
+    <footer class="webring-footer">
+        <Webring />
+    </footer>
 </Layout>
 <script>
     const el = document.querySelector(".alternate");

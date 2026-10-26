@@ -69,7 +69,7 @@
 
 [data-vine-host="true"] .project-images {
     position: relative;
-    z-index: 3;
+    z-index: 4;
 }
 
 @media (max-width: 1023px) {

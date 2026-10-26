@@ -1,12 +1,18 @@
-.pfp,
+.pfp {
+  display: block;
+}
+
 .pfp_shadow {
   position: absolute;
 }
 
 .pfp_wrapper {
-  height: 250px;
   width: 250px;
   position: relative;
+}
+
+.discord-status {
+  text-align: right;
 }
 
 .pfp_shadow {

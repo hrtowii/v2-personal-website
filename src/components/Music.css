@@ -1,0 +1,30 @@
+.lastfm {
+  position: relative;
+  isolation: isolate;
+}
+
+.lastfm-art {
+  position: absolute;
+  top: -3rem;
+  right: -2rem;
+
+  width: 18rem;
+  aspect-ratio: 1;
+  object-fit: cover;
+
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: -1;
+
+  image-rendering: pixelated;
+}
+
+.lastfm ul {
+  list-style: none;
+  padding: 0;
+}
+
+.lastfm-link {
+  display: flex;
+  justify-content: flex-end;
+}

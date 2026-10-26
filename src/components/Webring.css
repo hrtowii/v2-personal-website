@@ -1,0 +1,85 @@
+.webring-row {
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.webring-track {
+  display: flex;
+}
+
+.webring-group {
+  display: flex;
+  flex-shrink: 0;
+  width: max-content;
+  animation: webring-scroll 12s linear infinite;
+}
+
+.webring-group img {
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+}
+.webring-track:hover .webring-group {
+  animation-play-state: paused;
+}
+
+.webring-track a {
+  flex-shrink: 0;
+}
+
+.webring-track img {
+  display: block;
+  object-fit: contain;
+  z-index: 4;
+  image-rendering: pixelated;
+}
+
+@keyframes webring-scroll {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.petring {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0.5rem 1rem;
+  background: color-mix(in srgb, var(--bg), var(--fg) 7%);
+  color: var(--fg);
+
+  border-block: 1px solid var(--fg);
+  font-family: inherit;
+}
+
+.petring_logo a {
+  display: flex;
+  align-items: center;
+}
+
+.petring_logo img {
+  display: block;
+  image-rendering: pixelated;
+}
+
+.petring_buttons {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.petring_button a {
+  color: inherit;
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+
+.petring_button p {
+  margin: 0;
+}
+
+.petring_button a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}

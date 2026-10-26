@@ -3,12 +3,14 @@
 :root {
 	--bg: hsl(260, 82%, 14%);
 	--fg: hsl(120, 100%, 92%);
+	--noise-size: 32;
 }
 
 @media (prefers-color-scheme: light) {
 :root {
 	--fg: hsl(260, 82%, 14%);
 	--bg: hsl(120, 100%, 92%);
+	--noise-size: 32;
 }
 }
 
@@ -70,3 +72,12 @@ p, span, ol, ul, a {
 	width: 80vw;
 }
 
+.noise {
+    position: fixed;
+    inset: 0;
+    background-size: calc(2px * var(--noise-size));
+    pointer-events: none;
+    opacity: .012;
+    z-index: 3;
+    /*animation: fade-in 4s*/
+}

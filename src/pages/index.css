@@ -66,10 +66,17 @@
 
     grid-template-areas:
         "status blogposts blogposts"
-        "projects projects projects"
-        "badges music music";
+        "links links music"
+        "projects projects projects";
 }
 
 .status { grid-area: status; }
 .blogposts  { grid-area: blogposts; }
 .projects { grid-area: projects; }
+.music { grid-area: music; }
+
+.webring-footer {
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
+    margin-top: 2rem;
+}
