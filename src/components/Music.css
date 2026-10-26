@@ -21,6 +21,7 @@
 .lastfm ul {
   list-style: none;
   padding: 0;
+  max-width: 75%;
 }
 
 .lastfm-link {
