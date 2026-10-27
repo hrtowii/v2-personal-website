@@ -39,6 +39,14 @@ a:hover {
 /* mark: fonts (sizing in fonts.css) */
 
 @font-face {
+  font-family: 'Cohere Mono';
+  src: url('/CohereMono-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Michelangelus';
   src: url('/Michelangelus-Regular.ttf') format('truetype');
   font-weight: normal;
