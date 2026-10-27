@@ -1,7 +1,7 @@
 ---
 date: 2026-10-27
 title: "Cyberblitz 2026 quals"
-tags: ["rant"]
+tags: ["pwn"]
 draft: false
 ---
 <style>
