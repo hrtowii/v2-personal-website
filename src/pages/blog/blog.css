@@ -89,16 +89,16 @@ blockquote p {
 }
 
 /* bullet points */
-ul {
+article ul {
   list-style: none;
   padding-left: 1.5em;
 }
 
-ul li {
+article ul > li {
   position: relative;
 }
 
-ul li::before {
+article ul > li::before {
   content: ">";
   position: absolute;
   left: -1.5em;
@@ -107,22 +107,14 @@ ul li::before {
 }
 
 /* ordered lists */
-ol {
-  list-style: none;
-  counter-reset: item;
-  padding-left: 3em;
+article ol {
+  list-style: decimal outside;
+  padding-inline-start: 3em;
 }
 
-ol > li {
-  position: relative;
-  counter-increment: item;
-}
-
-ol > li::before {
-  content: "> " counter(item) ":";
-  position: absolute;
-  right: calc(100% + 0.5em);
+article ol > li::marker {
+  /* The native counter respects start/value attributes and reversed lists. */
+  content: "> " counter(list-item) ": ";
   color: var(--fg);
   font-weight: bold;
-  white-space: nowrap;
 }
