@@ -3,7 +3,11 @@ import "./Webring.css";
 import { helium, nixos_gif, tailscale } from "../utils/base64stuff";
 
 const webring_links: ScrollItem[] = [
-    { href: "https://hrtowii.nekoweb.org", src: "/88x31-madoka.png" },
+    { href: "https://hrtowii.dev", src: "/88x31-madoka.png" },
+    {
+        href: "https://notchoc.codeberg.page",
+        src: "/notchoc.svg",
+    },
     { href: "https://dane.gg", src: "https://dane.gg/assets/img/88x31.gif" },
     { href: "https://h4rl.dev", src: "/h4rl.png" },
     {
@@ -11,7 +15,10 @@ const webring_links: ScrollItem[] = [
         src: "https://experi.uwa.ooo/88x31-button/experi.gif",
     },
     { href: "https://snoolie.gay/", src: "/snoolie.gif" },
-    { href: "https://cyb3r17.space", src: "/cyb3r17.png" },
+    {
+        href: "https://sachitrame.sh",
+        src: "https://sachitrame.sh/static/my_button.gif",
+    },
     {
         href: "https://miaow.ing/",
         src: "https://miaow.ing/images/88x31_miaowing.png",
@@ -34,6 +41,30 @@ const webring_links: ScrollItem[] = [
     {
         href: "https://claration.dev",
         src: "https://claration.dev/88x31/me.png",
+    },
+    { href: "https://otomir23.me", src: "https://otomir23.me/88x31.png" },
+    {
+        href: "https://umbresp.cat",
+        src: "https://umbresp.cat/badges/88x31.gif",
+    },
+    { href: "https://bomberfish.ca", src: "https://bomberfish.ca/button.gif" },
+    { href: "https://jai.vin", src: "https://jai.vin/88x31.gif" },
+    {
+        href: "https://lain.ovh",
+        src: "https://lain.ovh/assets/other/88x31.gif",
+    },
+    {
+        href: "https://www.formalsnake.dev",
+        src: "/formalsnake.png",
+    },
+    {
+        href: "https://www.manthan3.me",
+        src: "https://www.manthan3.me/buttons/manthanxmew.gif",
+    },
+    { src: "https://nijika.dev/88x31.png", href: "https://nijika.dev" },
+    {
+        href: "https://www.lunarion31.dev/",
+        src: "https://www.lunarion31.dev/static/img/buttons/lumi.png",
     },
 ];
 
@@ -58,7 +89,7 @@ const badge_links: ScrollItem[] = [
         alt: "lastfm",
     },
     {
-        src: "https://88x31.nl/gifs/eightyeight.gif",
+        src: "/eightyeightthirtyone.png",
         href: "https://eightyeightthirty.one/",
     },
     {
@@ -85,7 +116,7 @@ interface ScrollItem {
 {[webring_links, badge_links].map((items) => (
     <div class="webring-row">
         <div class="webring-track">
-            {Array.from({ length: 8 }, (_, copy) => (
+            {Array.from({ length: 3 }, (_, copy) => (
                 <div class="webring-group">
                     {items.map(({ href, src, alt }) => (
                         <a href={href} tabindex={copy > 0 ? -1 : undefined}>
